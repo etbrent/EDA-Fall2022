@@ -1,0 +1,37 @@
+---
+title: "Module 3"
+author: "Emma Brentjens"
+date: "2022-09-14"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load Data
+
+```{r}
+USGS.flow.data <- read.csv("./Data/Raw/USGS_Site02085000_Flow_Raw.csv")
+View(USGS.flow.data)
+class(USGS.flow.data)
+summary(USGS.flow.data)
+```
+
+## Removing NAs
+
+```{r}
+summary(USGS.flow.data$X84937_00065_00001)
+USGS.flow.data.no.na <- na.omit(USGS.flow.data)
+dim(USGS.flow.data)
+dim(USGS.flow.data.no.na)
+View(USGS.flow.data.no.na)
+```
+
+## Formatting Dates
+
+```{r}
+View(USGS.flow.data.no.na$datetime)
+USGS.flow.data.no.na$datetime <- as.Date(USGS.flow.data.no.na$datetime, format = "%m/%d/%y")
+```
+
