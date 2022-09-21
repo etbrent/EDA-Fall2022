@@ -93,4 +93,4 @@ anne_score
 
 12. QUESTION: Which option of `if` and `else` vs. `ifelse` worked? Why?
 
-> Answer: When I tried the 'ifelse' function, x=T and x=F were "unused arguments." [??????]
+> Answer: When I tried the 'ifelse' function, x=T and x=F were "unused arguments." [???????]
