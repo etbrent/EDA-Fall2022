@@ -125,9 +125,9 @@ Combine your four vectors into a data frame and add informative column names.
 
 ```{r DataExercise-1c}
 
-durham_temps <- data.frame(temp_high, temp_high_C_2, temp_low, temp_low_C_2)
-colnames(durham_temps) <- c("High (F)", "High (C)", "Low (F)", "Low (C)")
-rownames(durham_temps) <- c("09/21", "09/22", "09/23", "09/24", "09/25", "09/26", "09/27", "09/28", "09/29", "09/30")
+rownames <- c("09/21", "09/22", "09/23", "09/24", "09/25", "09/26", "09/27", "09/28", "09/29", "09/30")
+durham_temps <- data.frame(rownames, temp_high, temp_high_C_2, temp_low, temp_low_C_2)
+colnames(durham_temps) <- c("Date", "High (F)", "High (C)", "Low (F)", "Low (C)")
 durham_temps
 
 ```
