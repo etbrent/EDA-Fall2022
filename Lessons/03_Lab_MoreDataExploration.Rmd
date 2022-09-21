@@ -51,6 +51,7 @@ matrix3 <- matrix(1:20, nrow = 5, ncol = 4, byrow = TRUE, # return after comma c
                   dimnames = list(c("uno", "dos", "tres", "quatro", "cinco"), 
                                   c("un", "deux", "trois", "quatre"))) #
 
+matrix3
 matrix1[4, ] #
 matrix1[ , 3] #
 matrix1[c(12, 14)] #
@@ -67,6 +68,7 @@ matrix4
 # Lists ---- 
 list1 <- list(name = "Maria", mynumbers = vector1, mymatrix = matrix1, age = 5.3); list1
 list1[[2]]
+list1$name
 
 # Data Frames ----
 d <- c(1, 2, 3, 4) # What type of vector?
@@ -95,11 +97,27 @@ Find a ten-day forecast of temperatures (Fahrenheit) for Durham, North Carolina.
 
 ```{r DataExercise-1a}
 
+temp_high <- c(91, 93, 72, 78, 85, 82, 78, 75, 73, 70)
+temp_low <- c(65, 52, 47, 58, 60, 53, 51, 50, 52,54)
+
 ```
 
 Now, create two additional vectors that include the ten-day forecast for the high and low temperatures in Celsius. Use a function to create the two new vectors from your existing ones in Fahrenheit.
 
 ```{r DataExercise-1b}
+
+temp_C <- function(x){(x-32)*(5/9)}
+temp_C(50)
+
+temp_high_C <- temp_C(temp_high)
+temp_high_C
+temp_high_C_2 <- format(round(temp_high_C, 0), nsmall = 0) ## round to nearest whole number?
+temp_high_C_2
+
+temp_low_C <- temp_C(temp_low)
+temp_low_C
+temp_low_C_2 <- format(round(temp_high_C, 0), nsmall = 0)
+temp_low_C_2
 
 ```
 
@@ -107,11 +125,20 @@ Combine your four vectors into a data frame and add informative column names.
 
 ```{r DataExercise-1c}
 
+durham_temps <- data.frame(temp_high, temp_high_C_2, temp_low, temp_low_C_2)
+colnames(durham_temps) <- c("High (F)", "High (C)", "Low (F)", "Low (C)")
+rownames(durham_temps) <- c("09/21", "09/22", "09/23", "09/24", "09/25", "09/26", "09/27", "09/28", "09/29", "09/30")
+durham_temps
+
 ```
 
 Use the common functions `summary` and `sd` to obtain basic data summaries of the ten-day forecast. How would you call these functions differently for the entire data frame vs. a single column? Attempt to demonstrate both options below.
 
 ```{r DataExercise-1d}
+
+summary(durham_temps)
+sd(durham_temps$`High (F)`)
+lapply(durham_temps, sd)
 
 ```
 
@@ -141,7 +168,7 @@ Install and load the package lubridate into your R session. Lubridate offers fas
 More info on lubridate [here][<https://cran.r-project.org/web/packages/lubridate/lubridate.pdf>].
 
 ```{r DateExercise1}
-#install.packages("lubridate")
+install.packages("lubridate")
 library(lubridate)
 
 #Ex1
@@ -159,21 +186,32 @@ date_obj_today
 #Ex_3 - on your own...
 str_juneteenth <- "19 June 1865"
 #Since the format is month-day-year we will use function mdy()
-#date_juneteenth <- ()
-#date_juneteenth
+date_juneteenth <- dmy(str_juneteenth)
+date_juneteenth
 ```
 
 ```{r DateExercise2}
 #century issue
 str_past <- "55-feb-3"
 date_obj_past <- ymd(str_past)
-date_obj_past
+date_obj_past ## year shows up as 2055
 
 #Build a function to fix year that is more general than the one discussed in the lesson
 fix.early.dates <- function(d, cutoff) {
        m <- year(d) %% 100  #operator %% is a modular division i.e. integer-divide year(d) by 100 and returns the remainder 
        year(d) <- ifelse(m > cutoff, 1900+m, 2000+m)  #this will update year(d), year() is a function that returns the year for a data object
        return(d)
+}
+
+fixed_date_obj_past <- fix.early.dates(date_obj_past,cutoff=21) #cutoff could be the current year to be more general or any other depending on data set 
+fixed_date_obj_past
+
+#############################################################################
+#Build a function to fix year that is more general than the one discussed in the lesson
+fix.early.dates <- function(str_juneteenth, cutoff) {
+       m <- year(str_juneteenth) %% 100  #operator %% is a modular division i.e. integer-divide year(d) by 100 and returns the remainder 
+       year(str_juneteenth) <- ifelse(m > cutoff, 1900+m, 2000+m)  #this will update year(d), year() is a function that returns the year for a data object
+       return(str_juneteenth)
 }
 
 fixed_date_obj_past <- fix.early.dates(date_obj_past,cutoff=21) #cutoff could be the current year to be more general or any other depending on data set 
