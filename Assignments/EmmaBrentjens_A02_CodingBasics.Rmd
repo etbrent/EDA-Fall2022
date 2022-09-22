@@ -41,7 +41,7 @@ mean(seq_100) ##calculating mean of sequence
 median(seq_100) ##calculating median of sequence
 
 #3. 
-##command to see if the mean is greater than the median  
+##command to see if the mean of the sequence is greater than the median  
 isTRUE(mean(seq_100)>median(seq_100))
 
 ```
@@ -57,7 +57,8 @@ isTRUE(mean(seq_100)>median(seq_100))
 8.  Label the columns of your data frame with informative titles.
 
 ```{r vectors}
-#5. 
+#5.
+##creating vectors of student names, test scores, and whether they passed
 student_names <- c("Anne", "Brad", "Chad", "Devin") ##character vector
 test_scores <- c(92, 75, 48, 83) ##numeric vector
 pass_test <- c(T, T, F, T) ##logical vector 
@@ -72,9 +73,11 @@ student_test_scores
 
 ```
 
+
 9.  QUESTION: How is this data frame different from a matrix?
 
 > Answer: A data frame can have different types of classes or modes (e.g. can combine numbers and dates), while matrices cannot.
+
 
 10. Create a function with an if/else statement. Your function should take a **vector** of test scores and print (not return) whether a given test score is a passing grade of 50 or above (TRUE or FALSE). You will need to choose either the `if` and `else` statements or the `ifelse` statement. 
 
@@ -82,15 +85,27 @@ student_test_scores
 
 ```{r function}
 #10.
+##if/else function to determine whether score is passing
 passing_grade <- function(x){
-  if(x>50){x=T} 
-     else{x=F}}
+  if(x>50){y=TRUE} 
+     else{y=FALSE}
+  print(y)}
 
-anne_score <- passing_grade(92) ###not sure why output not working???????
-anne_score
+##output of if/else function for single value
+passing_grade(92)
+#passing_grade(test_scores) --> if/else function cannot run a vector of values 
+
+##must use ifelse function to assess all scores in the vector
+passing_grade_2 <- function(x) {
+  ifelse(x>50, TRUE, FALSE)}
+
+##assessing test_scores vector with ifelse function
+passing_grade_2(test_scores) 
+passing_grade_2(80) ##ifelse function also works for single values
 
 ```
 
+
 12. QUESTION: Which option of `if` and `else` vs. `ifelse` worked? Why?
 
-> Answer: When I tried the 'ifelse' function, x=T and x=F were "unused arguments." [???????]
+> Answer: The 'if' and 'else' function could show the output for single numbers, but not the whole vector. The ifelse function could print the results for the entire vector because it is designed handle vectors. 
