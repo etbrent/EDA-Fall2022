@@ -93,7 +93,7 @@ passing_grade <- function(x){
 
 ##output of if/else function for single value
 passing_grade(92)
-#passing_grade(test_scores) --> if/else function cannot run a vector of values 
+#passing_grade(test_scores) --> if/else function cannot run a vector 
 
 ##must use ifelse function to assess all scores in the vector
 passing_grade_2 <- function(x) {
@@ -101,7 +101,7 @@ passing_grade_2 <- function(x) {
 
 ##assessing test_scores vector with ifelse function
 passing_grade_2(test_scores) 
-passing_grade_2(80) ##ifelse function also works for single values
+passing_grade_2(92) ##ifelse function also works for single values
 
 ```
 
