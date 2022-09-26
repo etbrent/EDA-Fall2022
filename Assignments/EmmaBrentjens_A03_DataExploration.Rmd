@@ -47,11 +47,13 @@ Litter <- read.csv("Copyof_NEON_NIWO_Litter_massdata_2018-08_raw.csv", stringsAs
 
 2.  The neonicotinoid dataset was collected from the Environmental Protection Agency's ECOTOX Knowledgebase, a database for ecotoxicology research. Neonicotinoids are a class of insecticides used widely in agriculture. The dataset that has been pulled includes all studies published on insects. Why might we be interested in the ecotoxicology of neonicotinoids on insects? Feel free to do a brief internet search if you feel you need more background information.
 
-> Answer:
+> Answer: This research can provide information on the efficacy of neonicotinoids to protect crops from insect pests. It is important to understand which doses are effective as using too little of the insecticide would not produce the desired effect but using too much may be harmful to nontarget species, like bees (Texas A&M AgriLife Extension, n.d.).
+Citation: Texas A&M AgriLife Extension. (n.d.). What is a neonicotinoid? Insects in the City. Retrieved September 26, 2022, from https://citybugs.tamu.edu/factsheets/ipm/what-is-a-neonicotinoid/
 
 3.  The Niwot Ridge litter and woody debris dataset was collected from the National Ecological Observatory Network, which collectively includes 81 aquatic and terrestrial sites across 20 ecoclimatic domains. 32 of these sites sample forest litter and woody debris, and we will focus on the Niwot Ridge long-term ecological research (LTER) station in Colorado. Why might we be interested in studying litter and woody debris that falls to the ground in forests? Feel free to do a brief internet search if you feel you need more background information.
 
-> Answer:
+> Answer: The amount of leaf litter and debris on the groun can influence soil moisture and nutrient cycling. As leaf litter decomposes, it is broken down into compounds that plants can absorb as they grow (Giweta, 2020). Leaf litter types can also provide information about plant composition in ecosystems (Giweta, 2020).
+Citation: Giweta, M. (2020). Role of litter production and its decomposition, and factors affecting the processes in a tropical forest ecosystem: A review. Journal of Ecology and Environment, 44(1), 11. https://doi.org/10.1186/s41610-020-0151-2
 
 4.  How is litter and woody debris sampled as part of the NEON network? Read the NEON_Litterfall_UserGuide.pdf document to learn more. List three pieces of salient information about the sampling methods here:
 
@@ -76,7 +78,7 @@ ncol(Neonics)
 class(Neonics)
 
 #5.
-##The "Neonics" dataset has 30 dimensions (yes???) with 4623 observations
+##The "Neonics" dataframe has 30 columns and 4623 rows/observations
 
 ```
 
@@ -208,6 +210,7 @@ functionalGroup_bar_graph <- ggplot(data=Litter, aes(x=functionalGroup))+
   geom_bar()+
   theme(axis.text.x=element_text(angle=90))
 
+##output for functionalGroup counts bar graph
 functionalGroup_bar_graph
 
 ```
@@ -215,6 +218,22 @@ functionalGroup_bar_graph
 15. Using `geom_boxplot` and `geom_violin`, create a boxplot and a violin plot of dryMass by functionalGroup.
 
 ```{r}
+#15
+##functionalGroup boxplot
+functionalGroup_boxplot <- ggplot(data=Litter, aes(x=functionalGroup, y=dryMass))+
+  geom_boxplot()+
+  theme(axis.text.x=element_text(angle=90))
+
+##boxplot output
+functionalGroup_boxplot
+
+##functionalGroup violin plot
+functionalGroup_violin <- ggplot(data=Litter, aes(x=functionalGroup, y=dryMass))+
+  geom_violin(pt.size = 10, trim=F)+
+  theme(axis.text.x=element_text(angle=90))
+
+##violin plot output
+functionalGroup_violin ##violin plot just coming out as vertical lines???????????????
 
 ```
 
@@ -224,4 +243,4 @@ Why is the boxplot a more effective visualization option than the violin plot in
 
 What type(s) of litter tend to have the highest biomass at these sites?
 
-> Answer:
+> Answer: The type of litter with the highest biomass is needles, followed by mixed litter and twigs and branches. 
