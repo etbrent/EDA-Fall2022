@@ -188,14 +188,27 @@ class(Litter$collectDate_date)
 13. Using the `unique` function, determine how many plots were sampled at Niwot Ridge. How is the information obtained from `unique` different from that obtained from `summary`?
 
 ```{r}
+#13.
+##determining number of plots sampled at Niwot Ridge
+length(unique(Litter$plotID)) ###is this okay??????????
+
+##running summary command on plots
+summary(Litter$plotID)
 
 ```
 
-> Answer:
+> Answer: There were 12 plots sampled at Niwot Ridge. A summary of Litter$plotID gives you the number of observations at each plot while the unique function provides the number of plots studied. 
 
 14. Create a bar graph of functionalGroup counts. This shows you what type of litter is collected at the Niwot Ridge sites. Notice that litter types are fairly equally distributed across the Niwot Ridge sites.
 
 ```{r}
+#14
+##creating functionalGroup counts bar graph
+functionalGroup_bar_graph <- ggplot(data=Litter, aes(x=functionalGroup))+
+  geom_bar()+
+  theme(axis.text.x=element_text(angle=90))
+
+functionalGroup_bar_graph
 
 ```
 
