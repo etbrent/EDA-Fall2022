@@ -182,6 +182,21 @@ Litter$collectDate_date <- as.Date(Litter$collectDate) ##get NAs when specifying
 
 class(Litter$collectDate_date)
 
+##Determine August 2018 sampling days
+##create another dataframe filtering by year and month
+Litter_Aug_2018 <- 
+  Litter %>%
+  mutate(year=year(collectDate_date)) %>%
+  mutate(month=month(collectDate_date)) %>%
+  filter(year == "2018") %>%
+  filter(month == "8")
+View(Litter_Aug_2018)
+
+##using unique function to determine sample days
+unique(Litter_Aug_2018$collectDate_date)
+
+##The days sampled in August 2018 were August 2nd and August 30th
+
 ```
 
 13. Using the `unique` function, determine how many plots were sampled at Niwot Ridge. How is the information obtained from `unique` different from that obtained from `summary`?
