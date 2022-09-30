@@ -132,7 +132,7 @@ class(Neonics$Conc.1..Author.)
 
 ```{r}
 #9.  
-##creating plot of studied by publication year
+##creating plot of studies by publication year
 studies_by_year <- ggplot(data=Neonics, aes(x=Publication.Year))+
   geom_freqpoly()
 
