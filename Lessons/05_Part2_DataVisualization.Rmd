@@ -42,7 +42,7 @@ PeterPaul.chem.nutrients.gathered$sampledate <- as.Date(
 Often, we will want to change multiple visual aspects of a plot. Ggplot comes with pre-built themes that will adjust components of plots if you call that theme. 
 ```{r, fig.height = 3, fig.width = 4, warning = FALSE}
 O3plot <- ggplot(EPAair) +
-  geom_point(aes(x = Date, y = Ozone)) 
+  geom_point(aes(x = Date, y = Ozone)) +
 print(O3plot)
 
 O3plot1 <- ggplot(EPAair) +
@@ -157,9 +157,9 @@ nationalparkcolors (package)
 * https://github.com/katiejolly/nationalparkcolors
 
 ```{r, warning = FALSE}
-# install.packages("viridis")
-# install.packages("RColorBrewer")
-# install.packages("colormap")
+ # install.packages("viridis")
+ # install.packages("RColorBrewer")
+ # install.packages("colormap")
 library(viridis)
 library(RColorBrewer)
 library(colormap)
