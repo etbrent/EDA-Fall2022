@@ -215,11 +215,6 @@ mean_AQI <-
 
 View(mean_AQI)
 
-mean_AQI %>%
-  group_by(Site.Name) %>%
-  summarise(Mean_AQI_O3 = mean(Mean_AQI_O3),
-            Mean_AQI_PM25 = mean(Mean_AQI_PM25))
-
 #12b
 
 #13
