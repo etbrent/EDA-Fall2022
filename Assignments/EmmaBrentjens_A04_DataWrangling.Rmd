@@ -35,6 +35,7 @@ The completed exercise is due on Friday, Oct7th @ 5:00pm.
 #1
 ##Load packages
 library(tidyverse)
+library(tidyr)
 library(lubridate)
 library(dplyr)
 
@@ -49,33 +50,25 @@ PM25_2019 <- read.csv("./Data/Raw/EPAair_PM25_NC2019_raw.csv", stringsAsFactors 
 
 #2
 ##Dimensions of O3_2018
-class(O3_2018)
-nrow(O3_2018)
-ncol(O3_2018)
+str(O3_2018)
 ##O3_2018 is a dataframe with 20 columns and 9737 rows/observations
 ##column names
 colnames(O3_2018)
 
 ##Dimensions of O3_2019
-class(O3_2019)
-nrow(O3_2019)
-ncol(O3_2019)
+str(O3_2019)
 ##O3_2019 is a dataframe with 20 columns and 10592 rows/observations
 ##column names
 colnames(O3_2019)
 
 ##Dimensions of PM25_2018
-class(PM25_2018)
-nrow(PM25_2018)
-ncol(PM25_2018)
+str(PM25_2018)
 ##PM25_2018 is a dataframe with 20 columns and 8983 rows/observations
 ##column names
 colnames(PM25_2018)
 
 ##Dimensions of PM25_2019
-class(PM25_2019)
-nrow(PM25_2019)
-ncol(PM25_2019)
+str(PM25_2019)
 ##PM25_2019 is a dataframe with 20 columns and 8581 rows/observations
 ##column names
 colnames(PM25_2019)
@@ -170,26 +163,35 @@ AirQuality_18_19 <- rbind(O3_2018_processed, O3_2019_processed, PM25_2018_proces
 
 ##Convert date column to date
 class(AirQuality_18_19$Date)
-AirQuality_18_19$Date <- as.Date(AirQaulity_18_19$Date, format = "%Y-%m-%d")
+AirQuality_18_19$Date <- as.Date(AirQuality_18_19$Date, format = "%Y-%m-%d")
 
 AirQuality_pipe <-
- AirQuality_18_19 %>%
- filter(Site.Name == "Linville Falls" | Site.Name == "Durham Armory" | Site.Name == "Leggett" | Site.Name == "Hattie Avenue" | Site.Name == "Clemmons Middle" | Site.Name == "Mendenhall School" | Site.Name == "Frying Pan Mountain" | Site.Name == "West Johnston Co." | Site.Name == "Garinger High School" | Site.Name == "Castle Hayne" | Site.Name == "Pitt Agri. Center" | Site.Name == "Bryson City" | Site.Name == "Millbrook School", !is.na()) %>%
-  mutate(Month = month(Date),
-         Year = year(Date)) %>%
-  group_by(Site.Name) %>%
+  AirQuality_18_19 %>%
+  filter(Site.Name == "Linville Falls" | Site.Name == "Durham Armory" | Site.Name == "Leggett" | Site.Name == "Hattie Avenue" | Site.Name == "Clemmons Middle" | Site.Name == "Mendenhall School" | Site.Name == "Frying Pan Mountain" | Site.Name == "West Johnston Co." | Site.Name == "Garinger High School" | Site.Name == "Castle Hayne" | Site.Name == "Pitt Agri. Center" | Site.Name == "Bryson City" | Site.Name == "Millbrook School") %>%
+  group_by(Date, Site.Name, AQS_PARAMETER_DESC, COUNTY) %>%
   summarise(mean_AQI = mean(DAILY_AQI_VALUE),
             mean_lat = mean(SITE_LATITUDE),
-            mean_lon = mean(SITE_LONGITUDE)) 
+            mean_lon = mean(SITE_LONGITUDE)) %>%
+  mutate(Month = month(Date)) %>%
+  mutate(Year = year(Date))
 
-AirQuality_pipe
-###WHY IS IT NOT WORKING
+dim(AirQuality_pipe)
 
 #9
+##Spread dataset
+AirQuality_spread <- pivot_wider(AirQuality_pipe, 
+                                 names_from = AQS_PARAMETER_DESC,
+                                 values_from = mean_AQI)
+
+#View(AirQuality_spread)
 
 #10
+##Dataset dimensions
+dim(AirQuality_spread) ##9 columns and 8976 rows
 
 #11
+##Saving dataset as .CSV file
+write.csv(AirQuality_spread, row.names = F, file = "./Data/Processed/EPAair_O3_PM25_NC1819_Processed.csv")
 
 ```
 
@@ -201,6 +203,22 @@ AirQuality_pipe
 
 ```{r}
 #12a
+##Obtaining mean AQI for ozone and PM 2.5
+##and remove rows with NAs for ozone and PM 2.5
+mean_AQI <- 
+  AirQuality_spread %>%
+  drop_na(Ozone) %>%
+  drop_na(PM2.5) %>%
+  group_by(Site.Name, Month, Year) %>%
+  summarise(Mean_AQI_O3 = mean(Ozone),
+            Mean_AQI_PM25 = mean(PM2.5))
+
+#View(mean_AQI)
+
+mean_AQI %>%
+  group_by(Site.Name) %>%
+  summarise(Mean_AQI_O3 = mean(Mean_AQI_O3),
+            Mean_AQI_PM25 = mean(Mean_AQI_PM25))
 
 #12b
 
