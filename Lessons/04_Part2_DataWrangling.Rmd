@@ -162,7 +162,6 @@ We also have information about individual traps, including the location and type
 Trap <- read.csv("./Data/Raw/NEON_NIWO_Litter_trapdata_raw.csv")
 View(Trap)
 LitterTrap <- left_join(Litter, Trap, by = c("siteID", "plotID", "trapID"))
-########doesnt work for me?
 
 dim(Litter)
 dim(Trap)
