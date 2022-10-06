@@ -204,20 +204,22 @@ write.csv(AirQuality_spread, row.names = F, file = "./Data/Processed/EPAair_O3_P
 ```{r}
 #12a
 ##Obtaining mean AQI for ozone and PM 2.5
-##and remove rows with NAs for ozone and PM 2.5
 mean_AQI <- 
   AirQuality_spread %>%
-  drop_na(Ozone) %>%
-  drop_na(PM2.5) %>%
-  group_by(Site.Name, Month, Year) %>%
+  group_by(Site.Name) %>%
   summarise(Mean_AQI_O3 = mean(Ozone),
             Mean_AQI_PM25 = mean(PM2.5))
 
-View(mean_AQI)
+dim(mean_AQI)
 
 #12b
+##Remove rows with NAs for ozone and PM 2.5
+mean_AQI_noNA <- mean_AQI %>%
+  drop_na(Mean_AQI_O3, Mean_AQI_PM25)
+
 
 #13
+dim(mean_AQI_noNA) 
 
 ```
 
