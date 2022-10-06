@@ -176,6 +176,7 @@ AirQuality_pipe <-
   mutate(Year = year(Date))
 
 dim(AirQuality_pipe)
+#View(AirQuality_pipe)
 
 #9
 ##Spread dataset
@@ -206,7 +207,7 @@ write.csv(AirQuality_spread, row.names = F, file = "./Data/Processed/EPAair_O3_P
 ##Obtaining mean AQI for ozone and PM 2.5
 mean_AQI <- 
   AirQuality_spread %>%
-  group_by(Site.Name) %>%
+  group_by(Site.Name, Month, Year) %>%
   summarise(Mean_AQI_O3 = mean(Ozone),
             Mean_AQI_PM25 = mean(PM2.5))
 
@@ -225,4 +226,4 @@ dim(mean_AQI_noNA)
 
 14. Why did we use the function `drop_na` rather than `na.omit`?
 
-> Answer: 
+> Answer: The drop_na function allows us to more easily drop NAs in specified rows within a pipe, where na.omit may drop rows with NAs in different columns. Additionally, drop_na and the pipe operator are both tidyverse methods.
