@@ -10,7 +10,8 @@ geometry: margin=2.54cm
 #For it to work, the "formatR" package needs to be installed
 
 #install.packages('formatR')
-knitr::opts_chunk$set(tidy.opts=list(width.cutoff=80), tidy=TRUE)
+knitr::opts_chunk$set(tidy.opts=list(width.cutoff=60), tidy=TRUE)
+
 ```
 
 ## OVERVIEW
@@ -32,7 +33,7 @@ The completed exercise is due on Friday, Oct7th @ 5:00pm.
 2. Explore the dimensions, column names, and structure of the datasets. 
 
 ```{r, message = FALSE}
-#1
+#1  
 ##Load packages
 library(tidyverse)
 library(tidyr)
@@ -48,29 +49,25 @@ O3_2019 <- read.csv("./Data/Raw/EPAair_O3_NC2019_raw.csv", stringsAsFactors = T)
 PM25_2018 <- read.csv("./Data/Raw/EPAair_PM25_NC2018_raw.csv", stringsAsFactors = T)
 PM25_2019 <- read.csv("./Data/Raw/EPAair_PM25_NC2019_raw.csv", stringsAsFactors = T)
 
-#2
+#2  
 ##Dimensions of O3_2018
-str(O3_2018)
-##O3_2018 is a dataframe with 20 columns and 9737 rows/observations
-##column names
+str(O3_2018) ##O3_2018 is a dataframe with 20 columns and 9737 rows/observations  
+##O3_2018 column names
 colnames(O3_2018)
 
 ##Dimensions of O3_2019
-str(O3_2019)
-##O3_2019 is a dataframe with 20 columns and 10592 rows/observations
-##column names
+str(O3_2019) ##O3_2019 is a dataframe with 20 columns and 10592 rows/observations  
+##O3_2019 column names
 colnames(O3_2019)
 
 ##Dimensions of PM25_2018
-str(PM25_2018)
-##PM25_2018 is a dataframe with 20 columns and 8983 rows/observations
-##column names
+str(PM25_2018) ##PM25_2018 is a dataframe with 20 columns and 8983 rows/observations  
+##PM25_2018 column names
 colnames(PM25_2018)
 
 ##Dimensions of PM25_2019
-str(PM25_2019)
-##PM25_2019 is a dataframe with 20 columns and 8581 rows/observations
-##column names
+str(PM25_2019) ##PM25_2019 is a dataframe with 20 columns and 8581 rows/observations  
+##PM25_2019 column names
 colnames(PM25_2019)
 
 ```
@@ -82,12 +79,16 @@ colnames(PM25_2019)
 6. Save all four processed datasets in the Processed folder. Use the same file names as the raw files but replace "raw" with "processed".
 
 ```{r}
-#3
+#3  
 ##Determining date formats
-#View(O3_2018)
-#View(O3_2019)
-#View(PM25_2018)
-#View(PM25_2019)
+
+#View(O3_2018)  
+
+#View(O3_2019)  
+
+#View(PM25_2018)  
+
+#View(PM25_2019)  
 
 ##Changing class of "Date" column
 O3_2018$Date <- as.Date(O3_2018$Date, format="%m/%d/%Y")
@@ -102,7 +103,7 @@ class(PM25_2018$Date)
 PM25_2019$Date <- as.Date(PM25_2019$Date, format="%m/%d/%Y")
 class(PM25_2019$Date)
 
-#4
+#4  
 ##Filtering for desired columns
 O3_2018_subset <- select(O3_2018, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY:SITE_LONGITUDE)
 #View(O3_2018_subset)
@@ -116,17 +117,21 @@ PM25_2018_subset <- select(PM25_2018, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARA
 PM25_2019_subset <- select(PM25_2019, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY:SITE_LONGITUDE)
 #View(PM25_2019_subset)
 
-#5
+#5  
 ##Editing cells in AQS_PARAMETER_DESC for PM 2.5 datasets
 PM25_2018_subset$AQS_PARAMETER_DESC = "PM2.5"
 PM25_2019_subset$AQS_PARAMETER_DESC = "PM2.5"
 
-#6
+#6  
 ##Saving processed datasets as .csv files
-write.csv(O3_2018_subset, row.names = F, file = "./Data/Processed/EPAair_O3_NC2018_processed.csv")
-write.csv(O3_2019_subset, row.names = F, file = "./Data/Processed/EPAair_O3_NC2019_processed.csv")
-write.csv(PM25_2018_subset, row.names = F, file = "./Data/Processed/EPAair_PM25_NC2018_processed.csv")
-write.csv(PM25_2019_subset, row.names = F, file = "./Data/Processed/EPAair_PM25_NC2019_processed.csv")
+write.csv(O3_2018_subset, row.names = F, file =
+            "./Data/Processed/EPAair_O3_NC2018_processed.csv")
+write.csv(O3_2019_subset, row.names = F, file =
+            "./Data/Processed/EPAair_O3_NC2019_processed.csv")
+write.csv(PM25_2018_subset, row.names = F, file =
+            "./Data/Processed/EPAair_PM25_NC2018_processed.csv")
+write.csv(PM25_2019_subset, row.names = F, file =
+            "./Data/Processed/EPAair_PM25_NC2019_processed.csv")
 
 ```
 
@@ -145,54 +150,57 @@ write.csv(PM25_2019_subset, row.names = F, file = "./Data/Processed/EPAair_PM25_
 11. Save your processed dataset with the following file name: "EPAair_O3_PM25_NC1718_Processed.csv"
 
 ```{r}
-#7
+#7  
 ##Uploading processed data
-O3_2018_processed <- read.csv("./Data/Processed/EPAair_O3_NC2018_processed.csv", stringsAsFactors = T)
-O3_2019_processed <- read.csv("./Data/Processed/EPAair_O3_NC2019_processed.csv", stringsAsFactors = T)
-PM25_2018_processed <- read.csv("./Data/Processed/EPAair_PM25_NC2018_processed.csv", stringsAsFactors = T)
-PM25_2019_processed <- read.csv("./Data/Processed/EPAair_PM25_NC2019_processed.csv", stringsAsFactors = T)
+O3_2018_processed <- read.csv("./Data/Processed/EPAair_O3_NC2018_processed.csv", 
+                              stringsAsFactors = T)
+O3_2019_processed <- read.csv("./Data/Processed/EPAair_O3_NC2019_processed.csv", 
+                              stringsAsFactors = T)
+PM25_2018_processed <- read.csv("./Data/Processed/EPAair_PM25_NC2018_processed.csv", 
+                                stringsAsFactors = T)
+PM25_2019_processed <- read.csv("./Data/Processed/EPAair_PM25_NC2019_processed.csv", 
+                                stringsAsFactors = T)
 
 ##Combining datasets
 AirQuality_18_19 <- rbind(O3_2018_processed, O3_2019_processed, PM25_2018_processed, PM25_2019_processed)
 #View(AirQuality_18_19)
 
-#8
-##Combined data pipe function
-
-###intersect function?????????????
+#8  
+##Combined data pipe function 
 
 ##Convert date column to date
-class(AirQuality_18_19$Date)
 AirQuality_18_19$Date <- as.Date(AirQuality_18_19$Date, format = "%Y-%m-%d")
+class(AirQuality_18_19$Date)
 
 AirQuality_pipe <-
   AirQuality_18_19 %>%
   filter(Site.Name == "Linville Falls" | Site.Name == "Durham Armory" | Site.Name == "Leggett" | Site.Name == "Hattie Avenue" | Site.Name == "Clemmons Middle" | Site.Name == "Mendenhall School" | Site.Name == "Frying Pan Mountain" | Site.Name == "West Johnston Co." | Site.Name == "Garinger High School" | Site.Name == "Castle Hayne" | Site.Name == "Pitt Agri. Center" | Site.Name == "Bryson City" | Site.Name == "Millbrook School") %>%
   group_by(Date, Site.Name, AQS_PARAMETER_DESC, COUNTY) %>%
-  summarise(mean_AQI = mean(DAILY_AQI_VALUE),
-            mean_lat = mean(SITE_LATITUDE),
-            mean_lon = mean(SITE_LONGITUDE)) %>%
+  summarise(mean_AQI = mean(DAILY_AQI_VALUE), 
+            mean_lat = mean(SITE_LATITUDE),  
+            mean_lon = mean(SITE_LONGITUDE)) %>%  
   mutate(Month = month(Date)) %>%
   mutate(Year = year(Date))
 
 dim(AirQuality_pipe)
-#View(AirQuality_pipe)
+#View(AirQuality_pipe)  
 
-#9
-##Spread dataset
+#9  
+##Spread dataset  
 AirQuality_spread <- pivot_wider(AirQuality_pipe, 
                                  names_from = AQS_PARAMETER_DESC,
                                  values_from = mean_AQI)
 
-#View(AirQuality_spread)
+#View(AirQuality_spread)  
 
-#10
+#10  
 ##Dataset dimensions
-dim(AirQuality_spread) ##9 columns and 8976 rows
+dim(AirQuality_spread) 
 
-#11
+#11  
 ##Saving dataset as .CSV file
-write.csv(AirQuality_spread, row.names = F, file = "./Data/Processed/EPAair_O3_PM25_NC1819_Processed.csv")
+write.csv(AirQuality_spread, row.names = F, file =
+            "./Data/Processed/EPAair_O3_PM25_NC1819_Processed.csv")
 
 ```
 
@@ -203,7 +211,7 @@ write.csv(AirQuality_spread, row.names = F, file = "./Data/Processed/EPAair_O3_P
 13. Call up the dimensions of the summary dataset.
 
 ```{r}
-#12a
+#12a  
 ##Obtaining mean AQI for ozone and PM 2.5
 mean_AQI <- 
   AirQuality_spread %>%
@@ -213,13 +221,13 @@ mean_AQI <-
 
 dim(mean_AQI)
 
-#12b
+#12b  
 ##Remove rows with NAs for ozone and PM 2.5
 mean_AQI_noNA <- mean_AQI %>%
   drop_na(Mean_AQI_O3, Mean_AQI_PM25)
 
-
-#13
+#13  
+##Determine dimensions of data
 dim(mean_AQI_noNA) 
 
 ```
