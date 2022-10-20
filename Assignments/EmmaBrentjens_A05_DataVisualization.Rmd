@@ -115,22 +115,48 @@ Tip: R has a build in variable called `month.abb` that returns a list of months;
 see <https://r-lang.com/month-abb-in-r-with-example>
 
 ```{r}
-#5a
+#5a ##name months?????????????????????
+##graph axes aligned????????????
 ##temperature boxplot 
 temp_boxplot <- ggplot(data=PeterPaul, aes(x=as.factor(month), y=temperature_C)) +
   geom_boxplot(aes(color=lakename)) +
   xlab("Month") +
   ylab("Temperature (Celsius)") +
+  guides(color=guide_legend(title="Lake Name")) +
   Emma_theme
 
 temp_boxplot
+
+#5b
+##TP boxplot 
+TP_boxplot <- ggplot(data=PeterPaul, aes(x=as.factor(month), 
+                                         y=tp_ug)) +
+  geom_boxplot(aes(color=lakename)) +
+  xlab("Month") +
+  ylab(expression("Total Phosphorus " (mu*g))) +
+  guides(color=guide_legend(title="Lake Name")) +
+  Emma_theme
+
+TP_boxplot
+
+#5c
+##TN boxplot 
+TN_boxplot <- ggplot(data=PeterPaul, aes(x=as.factor(month), 
+                                         y=tn_ug)) +
+  geom_boxplot(aes(color=lakename)) +
+  xlab("Month") +
+  ylab(expression("Total Nitrogen " (mu*g))) +
+  guides(color=guide_legend(title="Lake Name")) +
+  Emma_theme
+
+TN_boxplot
 
 ```
 
 Question: What do you observe about the variables of interest over seasons 
 and between lakes? 
 
-> Answer: 
+> Answer: Temperature generally seems to be highest in August. TP is highest in September and generally higher at Peter Lake than Paul Lake. TN does not seem to vary as much seasonally as temperature and TP, but is also generally a bit higher in August and at Peter Lake. ???????????????????????????? 
 
 6. [Niwot Ridge] Plot a subset of the litter dataset by displaying only the 
 "Needles" functional group. Plot the dry mass of needle litter by date and 
@@ -142,8 +168,50 @@ three facets rather than separated by color.
 
 ```{r}
 #6
+needles_plot <- ggplot(data=subset(Litter, functionalGroup=="Needles"), aes(x=collectDate, y=dryMass)) +
+  geom_point(aes(color=nlcdClass)) +
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y", 
+               limits=as.Date(c("2016-06-16", "2019-09-25"))) +
+  xlab("Date") +
+  ylab("Dry Mass") +
+  guides(color=guide_legend(title="NLCD Class")) +
+  Emma_theme +
+  theme(axis.text.x = element_text(angle=45, size=12)) 
+
+needles_plot
+##how to change date axis?????????????????????
 
 #7
+needles_plot_evergreen <- ggplot(data=subset(Litter, functionalGroup=="Needles" & nlcdClass=="evergreenForest"), aes(x=collectDate, y=dryMass)) +
+  geom_point(size = 1) +
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y", 
+               limits=as.Date(c("2016-06-16", "2019-09-25"))) +
+  xlab("Date") +
+  ylab("Dry Mass") +
+  theme_linedraw() +
+  theme(axis.text.x = element_text(angle=45, size=10))
+
+needles_plot_grassland <- ggplot(data=subset(Litter, functionalGroup=="Needles" & nlcdClass=="grasslandHerbaceous"), aes(x=collectDate, y=dryMass)) +
+  geom_point(size = 1) +
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y", 
+               limits=as.Date(c("2016-06-16", "2019-09-25"))) +
+  xlab("Date") +
+  ylab("Dry Mass") +
+  theme_linedraw() +
+  theme(axis.text.x = element_text(angle=45, size=10))
+
+needles_plot_shrub <- ggplot(data=subset(Litter, functionalGroup=="Needles" & nlcdClass=="shrubScrub"), aes(x=collectDate, y=dryMass)) +
+  geom_point(size = 1) +
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y", 
+               limits=as.Date(c("2016-06-16", "2019-09-25"))) +
+  xlab("Date") +
+  ylab("Dry Mass") +
+  theme_linedraw() +
+  theme(axis.text.x = element_text(angle=45, size=10))
+
+needles_plot_facet <- plot_grid(needles_plot_evergreen, needles_plot_grassland, needles_plot_shrub, nrow = 1, align = 'h', rel_heights = c(1.25, 1))
+
+needles_plot_facet
 
 
 ```
