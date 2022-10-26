@@ -77,7 +77,7 @@ For the NTL-LTER dataset, can we predict PM2.5 from Ozone?
 ```{r}
 
 #Exercise 2: Run a linear regression PM2.5 by Ozone. Find the p-value and R-squared value. 
-lm_ozone <- lm(EPAair$Ozone~EPAair$PM2.5)
+lm_ozone <- lm(EPAair$PM2.5~EPAair$Ozone)
 summary(lm_ozone)
 ##p value < 2 * 10^-16
 ##R^2 = 0.13
@@ -86,9 +86,10 @@ summary(lm_ozone)
 #Exercise 3: Build a scatterplot. Add a line and standard error for the linear regression. Add the regression equation to the plot
 ozone_scatter <- ggplot(data=EPAair, aes(x=Ozone, y=PM2.5)) +
   geom_point() +
-  geom_smooth(method=lm)
+  geom_smooth(method=lm) +
+  geom_text(x = 130, y = 10, label = "y = 0.38384x + 15.63824", hjust = 1) + 
+  geom_text(x = 120, y = 5, label = "SE = 13.06", hjust = 1)
 ozone_scatter
-##standard error? 
 
 
 ```
@@ -101,16 +102,32 @@ What other variables can we add to improve model?
 ```{r}
 
 #Exercise 4: Build correlation plots and identify more possible explanatory variables to add to the regression.
+library(corrplot)
+EPAair_2 <- data_frame(EPAair$mean_lat, EPAair$mean_lon,EPAair$Month, EPAair$Year, EPAair$PM2.5, EPAair$Ozone)
 
+EPAair_2 <- drop_na(EPAair_2)
+
+colnames(EPAair_2) <- c("mean_lat", "mean_lon", "Month", "Year", "PM2.5", "Ozone")
+
+EPAair_corr <- cor(EPAair_2)
+corrplot(EPAair_corr, method = "ellipse")
+corrplot.mixed(EPAair_corr, upper = "ellipse")
 
 
 
 #Exercise 5: Choose a model by AIC in a Stepwise Algorithm. Do the results from AIC match the variables you selected on Exercise 5?
 
+EPAair_model <- lm(data=EPAair_2, PM2.5 ~ Ozone + mean_lat + mean_lon + Month + Year)
+step(EPAair_model)
+
 
 
 
 #Exercise 6: Run another regression using the variables selected on Exercise 6. Compare r-squared value with the one from Exercise 5. 
+
+EPAair_model_2 <- lm(data=EPAair_2, PM2.5 ~ Ozone + mean_lat + mean_lon + Month)
+summary(EPAair_model_2)
+#R-squared = 0.19 (higher R-squared)
 
 ```
 
@@ -132,7 +149,7 @@ summary(Litter.Totals.anova)
 Litter.Totals.groups <- HSD.test(Litter.Totals.anova, "plotID", group = TRUE)
 Litter.Totals.groups$groups
 
-Litter.Totals <- Litter %>%
+Litter.Totals <- Litter.Totals %>%
   mutate( treatgroups = Litter.Totals.groups$groups[plotID,2])
 
 # Graph the results
@@ -150,4 +167,14 @@ print(Litter.Totals.plot)
 
 ```{r}
 #Exercise 7: Improve the plot```
+
+Litter.Totals.plot <- ggplot(Litter.Totals, aes(x = reorder(plotID, treatgroups, na.rm=T), y = dryMass)) +
+  geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  stat_summary(geom = "text", fun = max, vjust = -1, size = 3.5,
+               label = c("abc", "ab", "abcd", "bcd", "bcd", "a", 
+                         "d", "abcd", "cd", "d", "abcd", "abcd")) +
+  labs(x = "Plot ID", y = "Dry Mass (g)") +
+  ylim(0, 60)
+print(Litter.Totals.plot)
 

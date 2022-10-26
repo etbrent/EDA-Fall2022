@@ -87,10 +87,12 @@ Ha: B1 =/= 0 ??????????????
 #4
 NTL_LTER_Jul <- 
   NTL_LTER %>%
-  month <- month(NTL_LTER$sampledate) %>%
+  mutate(month = month(sampledate)) %>%
   filter(month == "7") %>%
   data_frame(c["lakename", "year4", "daynum", "depth", "temperature_C"]) %>%
   drop_na()
+
+View(NTL_LTER_Jul)
 
 #5
 
