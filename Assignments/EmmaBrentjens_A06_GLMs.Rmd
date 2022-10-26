@@ -1,6 +1,6 @@
 ---
 title: "Assignment 6: GLMs (Linear Regressios, ANOVA, & t-tests)"
-author: "Emma Brentjens:q"
+author: "Emma Brentjens"
 output: pdf_document
 geometry: margin=2.54cm
 editor_options: 
@@ -39,9 +39,11 @@ getwd()
 
 ##loading packages
 library(tidyverse)
+library(tidyr)
 library(agricolae)
 library(ggplot2)
 library(lubridate)
+library(dplyr)
 
 ##importing data
 NTL_LTER <- read.csv("./Data/Raw/NTL-LTER_Lake_ChemistryPhysics_Raw.csv")
@@ -85,7 +87,7 @@ Ha: B1 =/= 0 ??????????????
 #4
 NTL_LTER_Jul <- 
   NTL_LTER %>%
-  month <- month(sampledate) %>%
+  month <- month(NTL_LTER$sampledate) %>%
   filter(month == "7") %>%
   data_frame(c["lakename", "year4", "daynum", "depth", "temperature_C"]) %>%
   drop_na()
