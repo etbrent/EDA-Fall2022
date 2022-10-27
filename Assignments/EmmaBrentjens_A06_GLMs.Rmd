@@ -64,7 +64,6 @@ Emma_theme <- theme_linedraw() +
 ##setting theme
 theme_set(Emma_theme)
 
-
 ```
 
 ## Simple regression
@@ -85,17 +84,26 @@ Ha: B1 =/= 0 ??????????????
 
 ```{r scatterplot}
 #4
+##pipe function to process dataset 
 NTL_LTER_Jul <- 
   NTL_LTER %>%
   mutate(month = month(sampledate)) %>%
   filter(month == "7") %>%
-  data_frame(c["lakename", "year4", "daynum", "depth", "temperature_C"]) %>%
+  select(lakename, year4, daynum, depth, temperature_C) %>%
   drop_na()
 
 View(NTL_LTER_Jul)
 
 #5
+##water depth and temperature scatter plot
+temp_depth <- ggplot(NTL_LTER_Jul, aes(x=depth, y=temperature_C)) +
+  geom_point()+
+  geom_smooth(method=lm) + 
+  ylim(0,35) +
+  xlab("Depth") +
+  ylab("Temperature (Celsius)")
 
+temp_depth
 
 ```
 
@@ -109,7 +117,9 @@ View(NTL_LTER_Jul)
 
 ```{r linear.regression}
 #7
-
+##depth and temperature linear regression
+temp_depth_lm <- lm(data=NTL_LTER_Jul, temperature_C ~ depth)
+summary(temp_depth_lm)
 
 ```
 
@@ -131,6 +141,11 @@ Let's tackle a similar question from a different approach. Here, we want to expl
 
 ```{r temperature.model}
 #9
+##creating temperature model
+temp_model <- lm(data=NTL_LTER_Jul, temperature_C ~ year4 + daynum + depth)
+
+##stepwise AIC model selection
+temp_model_AIC <- step(temp_model)
 
 
 
@@ -152,7 +167,10 @@ Let's tackle a similar question from a different approach. Here, we want to expl
 
 ```{r anova.model}
 #12
-
+##July temperatures ANOVA test
+temp_aov <- aov(data=NTL_LTER_Jul, temperature_C ~ lakename)
+summary(temp_aov)
+#?????????????????????????????????????????????????????????????????
 
 ```
 
@@ -166,7 +184,15 @@ Let's tackle a similar question from a different approach. Here, we want to expl
 
 ```{r scatterplot.2}
 #14.
+##depth, temperature graph
+temp_depth_lake <- ggplot(NTL_LTER_Jul, aes(x=depth, y=temperature_C)) +
+  geom_point(aes(color=lakename))+
+  geom_smooth(method=lm, color="black") + 
+  ylim(0,35) +
+  xlab("Depth") +
+  ylab("Temperature (Celsius)")
 
+temp_depth_lake
 
 ```
 
