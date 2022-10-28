@@ -71,8 +71,8 @@ Our first research question is: Does mean lake temperature recorded during July 
 
 3. State the null and alternative hypotheses for this question:
 > Answer:
-H0: B1 = 0
-Ha: B1 =/= 0 ??????????????
+H0: slope = 0 (there is no significant relationship between lake temperature and depth)
+Ha: slope =/= 0 (lake temperature varies significantly with water depth)
 
 
 4.  Wrangle your NTL-LTER dataset with a pipe function so that the records meet the following criteria: 
@@ -100,7 +100,7 @@ temp_depth <- ggplot(NTL_LTER_Jul, aes(x=depth, y=temperature_C)) +
   geom_point()+
   geom_smooth(method=lm) + 
   ylim(0,35) +
-  xlab("Depth") +
+  xlab("Depth (m)") +
   ylab("Temperature (Celsius)")
 
 temp_depth
@@ -110,7 +110,7 @@ temp_depth
 
 6. Interpret the figure. What does it suggest with regards to the response of temperature to depth? Do the distribution of points suggest about anything about the linearity of this trend?
 
-> Answer: 
+> Answer: The figure demonstrates that temperature generally decreases with increasing water depth. The trend does not seem entirely linear in that the temperature seems to level off at about 10 meters.... (greater range of temps at lower depths)?????????????????????????????
 
 
 7. Perform a linear regression to test the relationship and display the results
@@ -126,7 +126,7 @@ summary(temp_depth_lm)
 
 8. Interpret your model results in words. Include how much of the variability in temperature is explained by changes in depth, the degrees of freedom on which this finding is based, and the statistical significance of the result. Also mention how much temperature is predicted to change for every 1m change in depth. 
 
-> Answer:
+> Answer: The model shows that temperature singificantly decreases with increasing water depth (p < 2e-16). The R-squared value indicates that about 73.9% of variability in temperature is due to changes in water depth. There are 9726 degrees of freedom. According to the slope of the regression line, temperature is predicted to decrease by about 1.95 degrees Celsius for every 1m increase in depth. 
 
 
 ---
@@ -145,7 +145,7 @@ Let's tackle a similar question from a different approach. Here, we want to expl
 temp_model <- lm(data=NTL_LTER_Jul, temperature_C ~ year4 + daynum + depth)
 
 ##stepwise AIC model selection
-temp_model_AIC <- step(temp_model)
+step(temp_model)
 
 
 #10
@@ -157,7 +157,7 @@ summary(temp_multivariate)
 
 11. What is the final set of explanatory variables that the AIC method suggests we use to predict temperature in our multiple regression? How much of the observed variance does this model explain? Is this an improvement over the model using only depth as the explanatory variable?
 
-> Answer: 
+> Answer: The model selected by AIC model selection includes year4, daynum, and depth. The R-squared value of this model is 0.7412, meaning about 74% of the variation in temperature is explained by changes in year, day of the year, and water depth. This model is improved over the depth model as the R-squared value is a bit higher. 
 
 
 
@@ -169,18 +169,18 @@ summary(temp_multivariate)
 ```{r anova.model}
 #12
 ##July temperatures ANOVA test
-temp_aov <- aov(data=NTL_LTER_Jul, temperature_C ~ lakename)
-summary(temp_aov)
+temp_lake_aov <- aov(data=NTL_LTER_Jul, temperature_C ~ lakename)
+summary(temp_lake_aov)
 
 ##July temperatures lm
-temp_lm <- lm(data=NTL_LTER_Jul, temperature_C ~ lakename)
-summary(temp_lm)
+temp_lake_lm <- lm(data=NTL_LTER_Jul, temperature_C ~ lakename)
+summary(temp_lake_lm)
 
 ```
 
 13. Is there a significant difference in mean temperature among the lakes? Report your findings. 
 
-> Answer: 
+> Answer: Yes, there is a significant difference in temperatures between the different lakes as the p-value of the ANOVA test was less than 2e-16. The linear model explains about 4% of variation in temperature. 
 
 
 
@@ -193,7 +193,7 @@ temp_depth_lake <- ggplot(NTL_LTER_Jul, aes(x=depth, y=temperature_C)) +
   geom_point(aes(color=lakename), alpha=0.5)+
   geom_smooth(method=lm, se=F, aes(color=lakename)) + 
   ylim(0,35) +
-  xlab("Depth") +
+  xlab("Depth (m)") +
   ylab("Temperature (Celsius)") +
   guides(color=guide_legend(title="Lake Name"))
 
@@ -208,7 +208,7 @@ temp_depth_lake
 ##Tukey HSD test on lake mean temperatures
 TukeyHSD(temp_aov)
 
-lake_temp_groups <- HSD.test(temp_aov, "lakename", group = TRUE)
+lake_temp_groups <- HSD.test(temp_aov, "lakename", group = T)
 lake_temp_groups
 ##should we just use the Tukey HSD test and say which groups of two lakes have the same or find the groups?
 
@@ -216,7 +216,7 @@ lake_temp_groups
 
 16.From the findings above, which lakes have the same mean temperature, statistically speaking, as Peter Lake? Does any lake have a mean temperature that is statistically distinct from all the other lakes?
 
->Answer:
+>Answer: According to the Tukey HSD test output, Paul Lake (p = 0.22) and Ward Lake (p = 0.78) have statistically similar mean temperatures as Peter Lake. There is no lake that is statistically different from every other lake. 
 
  
 
@@ -243,4 +243,4 @@ Crampton_Ward_Ttest
 
 ```
 
->Answer: 
+>Answer: looks like from the TukeyHSD test that the p-value has been adjusted for multiple comparisons
