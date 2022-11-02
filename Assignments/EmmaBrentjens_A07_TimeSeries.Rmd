@@ -31,6 +31,49 @@ The completed exercise is due on Tuesday, March 16 at 11:59 pm.
 
 ```{r, message = FALSE}
 #1
+##checking working directory
+getwd()
+
+##loading packages
+library(tidyverse)
+library(lubridate)
+library(zoo)
+library(trend)
+library(ggplot2)
+
+##creating and setting theme
+Emma_theme <- theme_linedraw() +
+  theme(axis.text = element_text(color = "black", size = 10), 
+        legend.position = "right")
+
+theme_set(Emma_theme)
+
+#2
+##importing datasets
+O3_2010 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2010_raw.csv", stringsAsFactors = T)
+
+O3_2011 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2011_raw.csv", stringsAsFactors = T)
+
+O3_2012 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2012_raw.csv", stringsAsFactors = T)
+
+O3_2013 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2013_raw.csv", stringsAsFactors = T)
+
+O3_2014 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2014_raw.csv", stringsAsFactors = T)
+
+O3_2015 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2015_raw.csv", stringsAsFactors = T)
+
+O3_2016 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2016_raw.csv", stringsAsFactors = T)
+
+O3_2017 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2017_raw.csv", stringsAsFactors = T)
+
+O3_2018 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2018_raw.csv", stringsAsFactors = T)
+
+O3_2019 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2019_raw.csv", stringsAsFactors = T)
+
+#combinind datasets
+GaringerOzone <- rbind(O3_2010, O3_2011, O3_2012, O3_2013, O3_2014, O3_2015, O3_2016, O3_2017, O3_2018, O3_2019)
+
+#View(GaringerOzone)
 
 ```
 
@@ -45,13 +88,29 @@ The completed exercise is due on Tuesday, March 16 at 11:59 pm.
 6. Use a `left_join` to combine the data frames. Specify the correct order of data frames within this function so that the final dimensions are 3652 rows and 3 columns. Call your combined data frame GaringerOzone. 
 
 ```{r}
-# 3
+#3
+##changing class of date column
+GaringerOzone$Date <- as.Date(GaringerOzone$Date, format="%m/%d/%Y")
+class(GaringerOzone$Date)
 
-# 4
+#4
+##selecting columns
+GaringerOzone_2 <- select(GaringerOzone, c("Date", "Daily.Max.8.hour.Ozone.Concentration", "DAILY_AQI_VALUE"))
+#View(GaringerOzone_2)
 
-# 5
 
-# 6
+#5
+Days <- as.data.frame(seq(as.Date("2010-01-01"), as.Date("2019-12-31"), "days"))
+View(Days)
+
+colnames(Days)[1] <- "Date"
+
+
+#6
+##combining data frames
+GaringerOzone <- left_join(Days, GaringerOzone_2, by = "Date")
+#View(GaringerOzone)
+summary(GaringerOzone)
 
 
 ```
@@ -62,10 +121,18 @@ The completed exercise is due on Tuesday, March 16 at 11:59 pm.
 
 ```{r}
 #7
+##creating line plot
+GaringerOzone_lineplot <- ggplot(GaringerOzone, aes(x=Date, y=Daily.Max.8.hour.Ozone.Concentration)) +
+  geom_line() +
+  geom_smooth(method=lm) +
+  ylab("Ozone Concentration (ppm)") +
+  Emma_theme
+
+GaringerOzone_lineplot
 
 ```
 
->Answer:
+>Answer: There does not appear to be a clear trend in ozone concentration over time.
 
 ## Time Series Analysis
 
@@ -75,10 +142,15 @@ Study question: Have ozone concentrations changed over the 2010s at this station
 
 ```{r}
 #8
+##filling in NAs
+GaringerOzone$Daily.Max.8.hour.Ozone.Concentration <- na.approx(GaringerOzone$Daily.Max.8.hour.Ozone.Concentration)
+
+summary(GaringerOzone$Daily.Max.8.hour.Ozone.Concentration)
+##still have NAs in dataframe? 
 
 ```
 
-> Answer: 
+> Answer: ??
 
 
 9. Create a new data frame called `GaringerOzone.monthly` that contains aggregated data: mean ozone concentrations for each month. In your pipe, you will need to first add columns for year and month to form the groupings. In a separate line of code, create a new Date column with each month-year combination being set as the first day of the month (this is for graphing purposes only)
