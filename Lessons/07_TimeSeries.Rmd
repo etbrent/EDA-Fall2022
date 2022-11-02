@@ -192,7 +192,8 @@ summary(wind_data_clean$AWND.clean)
 ggplot(wind_data_clean ) +
   geom_line(aes(x = DATE, y = AWND.clean), color = "red") +
   geom_line(aes(x = DATE, y = AWND), color = "black") +
-  ylab("Average Wind Speed") 
+  ylab("Average Wind Speed")
+
 ```
 
 ### Monotonic trend analysis, continued
