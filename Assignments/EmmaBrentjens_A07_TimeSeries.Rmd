@@ -40,6 +40,7 @@ library(lubridate)
 library(zoo)
 library(trend)
 library(ggplot2)
+library(Kendall)
 
 ##creating and setting theme
 Emma_theme <- theme_linedraw() +
@@ -198,18 +199,25 @@ plot(GaringerOzone.monthly.decomp)
 
 ```{r}
 #12
+##Mann-Kendall test
+SeasonalMannKendall(GaringerOzone.monthly.ts)
 
 ```
 
-> Answer: 
+> Answer: ??
 
 13. Create a plot depicting mean monthly ozone concentrations over time, with both a geom_point and a geom_line layer. Edit your axis labels accordingly.
 
 ```{r}
 # 13
+##creating monthly ozone plot
+mean_monthly_O3_plot <- ggplot(GaringerOzone.monthly, aes(x=month_year, y=mean_monthly_O3)) +
+  geom_point() +
+  geom_line() +
+  ylab("Mean Monthly Ozone (ppm)") +
+  xlab("Year")
 
-
-
+mean_monthly_O3_plot
 
 ```
 
@@ -223,13 +231,20 @@ plot(GaringerOzone.monthly.decomp)
 
 ```{r}
 #15
+##Extracting seasonal component
+monthly_O3_Components <- as.data.frame(GaringerOzone.monthly.decomp$time.series[,2:3])
 
+monthly_O3_Components <- mutate(monthly_O3_Components,
+        Observed = GaringerOzone.monthly$mean_monthly_O3,     
+        Date = GaringerOzone.monthly$month_year)
+
+#View(monthly_O3_Components)
 
 
 #16
-
-
-
+##make new dataframe a time series
+monthly_O3_Components.ts <- ts(monthly_O3_Components$Observed, start = c(1, 2010), frequency = 12)
+MannKendall(monthly_O3_Components.ts)
 
 ```
 
