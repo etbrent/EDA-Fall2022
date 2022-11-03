@@ -43,8 +43,7 @@ library(ggplot2)
 
 ##creating and setting theme
 Emma_theme <- theme_linedraw() +
-  theme(axis.text = element_text(color = "black", size = 10), 
-        legend.position = "right")
+  theme(axis.text = element_text(color = "black", size = 10), legend.position = "right")
 
 theme_set(Emma_theme)
 
@@ -145,8 +144,9 @@ Study question: Have ozone concentrations changed over the 2010s at this station
 ##filling in NAs
 GaringerOzone$Daily.Max.8.hour.Ozone.Concentration <- na.approx(GaringerOzone$Daily.Max.8.hour.Ozone.Concentration)
 
-summary(GaringerOzone$Daily.Max.8.hour.Ozone.Concentration)
-##still have NAs in dataframe? 
+GaringerOzone$DAILY_AQI_VALUE <- na.approx(GaringerOzone$DAILY_AQI_VALUE)
+
+summary(GaringerOzone)
 
 ```
 
@@ -162,16 +162,20 @@ GaringerOzone.monthly <-
   GaringerOzone %>%
   mutate(Month = month(Date)) %>%
   mutate(Year = year(Date)) %>%
-  month_year <- paste(Month, Year) %>%
-  summarize(mean_monthly_O3 = mean())
+  group_by(Year, Month) %>%
+  summarize(mean_monthly_O3 = mean(Daily.Max.8.hour.Ozone.Concentration)) %>%
+  mutate(month_year = my(paste(Month, "-", Year))) 
 
 ```
-
 
 10. Generate two time series objects. Name the first `GaringerOzone.daily.ts` and base it on the dataframe of daily observations. Name the second `GaringerOzone.monthly.ts` and base it on the monthly average ozone values. Be sure that each specifies the correct start and end dates and the frequency of the time series.
 
 ```{r}
 #10
+##creating time series objects
+GaringerOzone.daily.ts <- ts(GaringerOzone$Daily.Max.8.hour.Ozone.Concentration, start = c(2010, 01), frequency = 365)
+
+GaringerOzone.monthly.ts <- ts(GaringerOzone.monthly$mean_monthly_O3, start = c(1, 2010), frequency = 12)
 
 ```
 
@@ -180,7 +184,12 @@ GaringerOzone.monthly <-
 
 ```{r}
 #11
+##Decomposing time series
+GaringerOzone.daily.decomp <- stl(GaringerOzone.daily.ts, s.window = "periodic")
+plot(GaringerOzone.daily.decomp)
 
+GaringerOzone.monthly.decomp <- stl(GaringerOzone.monthly.ts, s.window = "periodic")
+plot(GaringerOzone.monthly.decomp)
 
 ```
 
@@ -189,8 +198,6 @@ GaringerOzone.monthly <-
 
 ```{r}
 #12
-
-
 
 ```
 
