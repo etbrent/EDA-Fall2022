@@ -157,6 +157,13 @@ summary(GaringerOzone$Daily.Max.8.hour.Ozone.Concentration)
 
 ```{r}
 #9
+##creating new dataframe
+GaringerOzone.monthly <- 
+  GaringerOzone %>%
+  mutate(Month = month(Date)) %>%
+  mutate(Year = year(Date)) %>%
+  month_year <- paste(Month, Year) %>%
+  summarize(mean_monthly_O3 = mean())
 
 ```
 
