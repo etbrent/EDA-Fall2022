@@ -48,6 +48,7 @@ Emma_theme <- theme_linedraw() +
 
 theme_set(Emma_theme)
 
+
 #2
 ##importing datasets
 O3_2010 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2010_raw.csv", stringsAsFactors = T)
@@ -93,6 +94,7 @@ GaringerOzone <- rbind(O3_2010, O3_2011, O3_2012, O3_2013, O3_2014, O3_2015, O3_
 GaringerOzone$Date <- as.Date(GaringerOzone$Date, format="%m/%d/%Y")
 class(GaringerOzone$Date)
 
+
 #4
 ##selecting columns
 GaringerOzone_2 <- select(GaringerOzone, c("Date", "Daily.Max.8.hour.Ozone.Concentration", "DAILY_AQI_VALUE"))
@@ -112,7 +114,6 @@ GaringerOzone <- left_join(Days, GaringerOzone_2, by = "Date")
 #View(GaringerOzone)
 summary(GaringerOzone)
 
-
 ```
 
 ## Visualize
@@ -124,7 +125,7 @@ summary(GaringerOzone)
 ##creating line plot
 GaringerOzone_lineplot <- ggplot(GaringerOzone, aes(x=Date, y=Daily.Max.8.hour.Ozone.Concentration)) +
   geom_line() +
-  geom_smooth(method=lm) +
+  geom_smooth(method=lm, color="tomato") +
   ylab("Ozone Concentration (ppm)") +
   Emma_theme
 
@@ -151,7 +152,7 @@ summary(GaringerOzone)
 
 ```
 
-> Answer: ??
+> Answer: We don't use the spline interpolation becuase the data do not fit a quadratic distribution. The piecewise constant interpolation does not approximate the value, but sets NAs equal to the nearest value. 
 
 
 9. Create a new data frame called `GaringerOzone.monthly` that contains aggregated data: mean ozone concentrations for each month. In your pipe, you will need to first add columns for year and month to form the groupings. In a separate line of code, create a new Date column with each month-year combination being set as the first day of the month (this is for graphing purposes only)
@@ -204,7 +205,7 @@ SeasonalMannKendall(GaringerOzone.monthly.ts)
 
 ```
 
-> Answer: ??
+> Answer: Based on the decomposition plot, it seems the data are mainly driven by seasonality, so it makes sense to account for seasonality in analyzing the trend.
 
 13. Create a plot depicting mean monthly ozone concentrations over time, with both a geom_point and a geom_line layer. Edit your axis labels accordingly.
 
@@ -231,10 +232,10 @@ mean_monthly_O3_plot
 
 ```{r}
 #15
-##Extracting seasonal component
-monthly_O3_Components <- as.data.frame(GaringerOzone.monthly.decomp$time.series[,2:3])
+##Subtracting seasonal component
+monthly_O3_no_season <- as.data.frame(GaringerOzone.monthly.decomp$time.series[,2:3])
 
-monthly_O3_Components <- mutate(monthly_O3_Components,
+monthly_O3_no_season <- mutate(monthly_O3_no_season,
         Observed = GaringerOzone.monthly$mean_monthly_O3,     
         Date = GaringerOzone.monthly$month_year)
 
@@ -243,8 +244,8 @@ monthly_O3_Components <- mutate(monthly_O3_Components,
 
 #16
 ##make new dataframe a time series
-monthly_O3_Components.ts <- ts(monthly_O3_Components$Observed, start = c(1, 2010), frequency = 12)
-MannKendall(monthly_O3_Components.ts)
+monthly_O3_no_season.ts <- ts(monthly_O3_no_season$Observed, start = c(1, 2010), frequency = 12)
+MannKendall(monthly_O3_no_season.ts)
 
 ```
 
