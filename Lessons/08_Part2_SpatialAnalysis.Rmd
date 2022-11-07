@@ -75,6 +75,8 @@ class(epa_pm25_sites_sf)
 #What is its CRS again?
 st_crs(epa_pm25_sites_sf)$epsg
 
+mapview(epa_pm25_sites_sf)
+
 #Plot the data
 ggplot(data=epa_pm25_sites_sf) +
   geom_sf()
@@ -119,19 +121,19 @@ mapView(counties_sf, zcol = "AWATER")
 
 ```{r read HUCs shapefile}
 #Read the shapefile into an sf dataframe named "huc8_sf"
-
+HUC <- st_read('./Data/Spatial/NCHUC8.shp') 
 
 #Reveal the columns
-
+colnames(HUC)
 
 #Check the CRS
-
+st_crs(HUC)
 
 #Examine some records
-head(huc8_sf)
+head(HUC)
 
 #View the data as a map, colored by the acreage in each
-
+mapView(HUC, zcol = "ACRES")
 
 
 
