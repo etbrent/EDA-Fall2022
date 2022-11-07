@@ -120,6 +120,8 @@ EPAair.sf <- EPAair.sites %>%
 
 #View the data using the methods above...
 
+mapview(EPAair.sf)
+
 ```
 
 ### EXERCISE: Creating a spatial dataframe from known coordinates
@@ -245,7 +247,11 @@ mean_distances <-  rowMeans(distance_matrix)
 EPAair.sf.utm  <-  EPAair.sf.utm %>% 
   bind_cols(mean_distances)
 
+ggplot() +
+  geom_sf(data = EPAair.sf.utm, aes(size=...9), color='blue') 
 
+ggplot() +
+  geom_point(data = EPAair.sf.utm, aes(x=...9, y=mean_Ozone), color='blue')
 
 ```
 
