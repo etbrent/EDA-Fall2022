@@ -603,3 +603,4 @@ latticeview(m1, m2)
 #Create a synchronized view...
 sync(m1,m2)
 ```
+
