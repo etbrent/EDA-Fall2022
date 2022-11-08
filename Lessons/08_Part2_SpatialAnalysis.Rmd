@@ -145,13 +145,12 @@ mapView(HUC, zcol = "ACRES")
 
 ```{r Select the Upper Neuse HUC 8}
 #Read the shapefile into an sf dataframe
-
-
+HUC2 <- st_read('./Data/Spatial/NCHUC8.shp') %>%
+  filter(SUBBASIN == "Upper Neuse")
 
 #Create a map
-
-
-
+mapview(HUC2, col.regions="purple") + 
+  mapview(filter(HUC, !SUBBASIN == "Upper Neuse"), col.regions="orange")
 
 ```
 
@@ -177,6 +176,8 @@ nrow(powerplants_sf)
 #View on a map - specify the geometry column to draw faster
 plot(powerplants_sf$geometry)
 
+mapview(powerplants_sf)
+
 #Filter for just powerplants found in NC
 nc_powerplants_sf <- powerplants_sf %>% 
   filter(STATE == "NC") 
@@ -193,6 +194,8 @@ nc_powerplants_sf <- nc_powerplants_sf %>%
 # Examine counts by fuel type
 ggplot(nc_powerplants_sf) + 
   geom_sf(aes(color = PRIM_FUEL)) 
+
+mapview(nc_powerplants_sf, zcol="PRIM_FUEL")
 
 ```
 
@@ -248,25 +251,20 @@ ggplot() +
 
 ```{r}
 #Compute HUC8 wind energy
+wind_energy <- read.csv(
+  'https://raw.githubusercontent.com/ENV859/EnviroAtlasData/main/Wind_Energy.csv',colClasses = c('HUC_12' = 'factor')) %>%
+  mutate(HUC_8 = substr(HUC_12,1,8)) %>%
+  group_by(HUC_8) %>%
+  summarize(sum_kWh = sum(kWhkm2day))
 
 
-
-
-
-  
 #Join to HUC_8 features
-
-
-
+HUC8_join <- HUC %>% 
+  left_join(wind_energy, by = "HUC_8") ##not sure what to do here
 
 
 #View the outputs
-
-
-
-
-
-
+mapview(HUC8_join, zcol="sum_kWh")
 
 ```
 
@@ -290,19 +288,31 @@ mapview(state_sf)
 
 ```{r Aggregate the HUC data on an attribute, saving as huc2_sf}
 #List the unique values in the DWQ_Basin field
-unique(huc8_sf$DWQ_Basin)
+unique(HUC$DWQ_Basin)
 
 
 #Summarize on DWQ Basin value
-huc2_sf <- huc8_sf %>% 
+HUC_aggregate <- HUC %>% 
   group_by(DWQ_Basin) %>% 
   summarize(
     acres = sum(ACRES),
     sq_miles = sum(SQ_MILES)
   )
 
+mapview(HUC_aggregate, zcol="acres")
+
 #Map the data
-ggplot() + geom_sf(data=huc2_sf,aes(fill=acres))
+ggplot() + geom_sf(data=HUC_aggregate,aes(fill=acres))
+
+
+HUC_aggregate2 <- HUC %>% 
+  group_by("DWQ_Basin") %>% 
+  summarize(
+    acres = sum(ACRES),
+    sq_miles = sum(SQ_MILES)
+  )
+
+mapview(HUC_aggregate2)
 
 ```
 
@@ -331,8 +341,8 @@ On top of projecting any geographic data to adjust for the limitations of the so
 epa_sf_utm <-      st_transform(epa_pm25_sites_sf, crs = 26917)
 counties_sf_utm <- st_transform(counties_sf, crs = 26917)
 state_sf_utm <-    st_transform(state_sf,crs = 26917)
-huc8_sf_utm <-     st_transform(huc8_sf, crs = 26917)
-huc2_utm <-        st_transform(huc2_sf, crs = 26917)
+huc8_sf_utm <-     st_transform(HUC, crs = 26917)
+huc2_utm <-        st_transform(HUC_aggregate, crs = 26917)
 ```
 
 ## 3.3 Clipping and intersecting data
@@ -382,16 +392,25 @@ mapview(neuse_counties_sf, zcol='Area_m2')
 
 ```{r EXERCISE: Clipping}
 #Select the Triangle County from the 
+triangle_counties <- counties_sf_utm %>%
+  filter(NAME == "Chatham" | NAME == "Durham" | NAME == "Orange" | NAME =="Wake")
 
-
-  
 #Grab the intersecting HUC_8s
+#triangle_intersect_2 <- huc8_sf_utm %>% 
+ # filter(st_intersects(x = ., y = triangle_counties, sparse = FALSE)) ##don't know what to do
 
+triangle_intersect <- huc8_sf_utm[triangle_counties,]
+
+mapview(triangle_counties) +
+  mapview(triangle_intersect, alpha.regions = 0)
 
 
 #Intersect the HUC_8s
+triangle_intersect2 <- huc2_utm %>% 
+  st_intersection(triangle_counties) ##??????
 
-
+mapview (triangle_counties, color="red")+
+  mapview(triangle_intersect2, alpha.regions = 0)
 
 ```
 
@@ -479,7 +498,11 @@ mapView(counties_sf[resultMask,])
 the_site_counties <- theSite_sfc_transformed %>% 
   st_buffer(.,dist=30000)
 
+site_buffer <- st_intersects(counties_sf_utm, the_site_counties, sparse = F)
+#mapview(site_buffer) does not work?
 
+site_buffer_2 <- counties_sf_utm[the_site_counties,]
+mapview(site_buffer_2)
                             
 ```
 
@@ -518,13 +541,13 @@ Leaflet is the most powerful of the three. However it requires getting all our d
 EPAair_wgs84 <- st_transform(epa_pm25_sites_sf, c=4326)
 counties_WGS84 <- st_transform(counties_sf_utm, c=4326)
 state_WGS84 <- st_transform(state_sf,c=4326)
-huc8s_WGS84 <- st_transform(huc8_sf,c=4326)
-huc2_WGS84<- st_transform(huc2_sf,c=4326)
+huc8s_WGS84 <- st_transform(HUC,c=4326)
+huc2_WGS84<- st_transform(HUC2,c=4326)
 
 #Now plot with leaflet: no errors as all layers are in Leaflet's native CRS (WGS84)
 leaflet() %>% addTiles() %>% 
   addPolygons(data=counties_WGS84,weight=1,color='red') %>% 
-  addPolygons(data=huc8_sf,weight=1)
+  addPolygons(data=HUC,weight=1)
 ```
 
 ### 4.2.2 Changing basemaps in Leaflet
