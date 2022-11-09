@@ -152,6 +152,10 @@ HUC2 <- st_read('./Data/Spatial/NCHUC8.shp') %>%
 mapview(HUC2, col.regions="purple") + 
   mapview(filter(HUC, !SUBBASIN == "Upper Neuse"), col.regions="orange")
 
+mapview(HUC, col.regions="orange") +
+mapview(HUC2, col.regions="purple", alpha.regions=1) 
+  
+
 ```
 
 ### 2.2.4 Reading in GeoJSON data
@@ -255,12 +259,12 @@ wind_energy <- read.csv(
   'https://raw.githubusercontent.com/ENV859/EnviroAtlasData/main/Wind_Energy.csv',colClasses = c('HUC_12' = 'factor')) %>%
   mutate(HUC_8 = substr(HUC_12,1,8)) %>%
   group_by(HUC_8) %>%
-  summarize(sum_kWh = sum(kWhkm2day))
+  summarize(sum_kWh = sum(AvgWindEnergy))
 
 
 #Join to HUC_8 features
 HUC8_join <- HUC %>% 
-  left_join(wind_energy, by = "HUC_8") ##not sure what to do here
+  left_join(wind_energy, by = "HUC_8") 
 
 
 #View the outputs
@@ -306,7 +310,7 @@ ggplot() + geom_sf(data=HUC_aggregate,aes(fill=acres))
 
 
 HUC_aggregate2 <- HUC %>% 
-  group_by("DWQ_Basin") %>% 
+  group_by() %>% 
   summarize(
     acres = sum(ACRES),
     sq_miles = sum(SQ_MILES)
@@ -402,14 +406,14 @@ triangle_counties <- counties_sf_utm %>%
 triangle_intersect <- huc8_sf_utm[triangle_counties,]
 
 mapview(triangle_counties) +
-  mapview(triangle_intersect, alpha.regions = 0)
+  mapview(triangle_intersect, alpha.regions = 0, color="red")
 
 
 #Intersect the HUC_8s
 triangle_intersect2 <- huc2_utm %>% 
   st_intersection(triangle_counties) ##??????
 
-mapview (triangle_counties, color="red")+
+mapview (triangle_counties)+
   mapview(triangle_intersect2, alpha.regions = 0)
 
 ```

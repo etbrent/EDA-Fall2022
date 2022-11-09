@@ -58,7 +58,7 @@ NE_counties <- st_read("./Data/Spatial/cb_2018_us_county_20m.shp") %>%
   filter(STATEFP == 31)
 
 #4. Reveal the CRS of the counties features
-st_crs(NE_counties) #???
+st_crs(NE_counties)$epsg
 
 #5. Plot the data
 mapview(NE_counties)
@@ -155,7 +155,8 @@ site_flow <- read.csv("./Data/Raw/NWIS_SiteFlowData_NE_RAW.csv", stringsAsFactor
 colnames(site_flow)
 
 #16. Join the flow data to our NWIS gage location spatial dataframe
-gage_locations_join <- left_join(gage_locations_sf, site_flow, by = c("site_no", "station_nm"))
+gage_locations_join <- left_join(gage_locations_sf, site_flow, by = c("site_no", "station_nm")) %>%
+  na.omit()
 
 #17. Show the column names of the joined dataset
 colnames(gage_locations_join)
@@ -173,10 +174,11 @@ Now we can examine where the flooding appears most acute by visualizing gage hei
 
 ```{r}
 #Map the points, sized by gage height
-gage_map <- mapview(NE_counties, col.regions="white") +
+mapview(NE_counties, color="black", col.regions="white") +
   mapview(gage_locations_join, zcol="gage_ht")
 
-gage_map
+mapview(NE_counties, color="black", col.regions="white") +
+  mapview(gage_locations_join, cex="gage_ht")
 
 ```
 
@@ -194,10 +196,12 @@ Up next we will do some spatial analysis with our data. To prepare for this, we 
 
 ```{r}
 #20 Transform the counties and gage location datasets to UTM Zone 14
-
+NE_counties_utm <- st_transform(NE_counties, crs = 32614)
+gage_locations_join_utm <- st_transform(gage_locations_join, crs = 32614)
 
 #21 Plot the data
-
+mapview(NE_counties_utm, col.regions="white") +
+  mapview(gage_locations_join_utm) ##each can be seen as a different color???
 
 ```
 
