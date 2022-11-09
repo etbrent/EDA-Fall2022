@@ -155,19 +155,13 @@ site_flow <- read.csv("./Data/Raw/NWIS_SiteFlowData_NE_RAW.csv", stringsAsFactor
 colnames(site_flow)
 
 #16. Join the flow data to our NWIS gage location spatial dataframe
-#gage_locations_join <-  merge(x = gage_locations_sf,
-                           # y = site_flow, 
-                           # by.x = "site_no", 
-                           # by.y = "station_nm" ) #???
-
-gage_locations_join <- gage_locations_sf %>%
-  left_join(site_flow, by = "site_no", "station_nm") #???
+gage_locations_join <- left_join(gage_locations_sf, site_flow, by = c("site_no", "station_nm"))
 
 #17. Show the column names of the joined dataset
 colnames(gage_locations_join)
 
 #18. Show the dimensions of this joined dataset
-
+dim(gage_locations_join)
 
 ```
 
@@ -179,7 +173,10 @@ Now we can examine where the flooding appears most acute by visualizing gage hei
 
 ```{r}
 #Map the points, sized by gage height
+gage_map <- mapview(NE_counties, col.regions="white") +
+  mapview(gage_locations_join, zcol="gage_ht")
 
+gage_map
 
 ```
 
