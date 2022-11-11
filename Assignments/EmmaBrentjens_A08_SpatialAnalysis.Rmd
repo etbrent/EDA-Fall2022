@@ -104,7 +104,7 @@ colnames(gage_locations)
 #10. Convert to an sf object
 gage_locations_sf <- gage_locations %>% 
   st_as_sf(coords = c('dec_long_va','dec_lat_va'),
-           crs=4326) #why???
+           crs=4269) 
 
 #11. Re-examine the column names
 colnames(gage_locations_sf)
@@ -130,7 +130,7 @@ gage_county_plot <- ggplot() +
   geom_sf(data=NE_counties) +
   geom_sf(data=gage_locations_sf) 
 
-gage_county_plot ##work separately but not together?
+gage_county_plot
 
 ```
 
@@ -155,8 +155,10 @@ site_flow <- read.csv("./Data/Raw/NWIS_SiteFlowData_NE_RAW.csv", stringsAsFactor
 colnames(site_flow)
 
 #16. Join the flow data to our NWIS gage location spatial dataframe
-gage_locations_join <- left_join(gage_locations_sf, site_flow, by = c("site_no", "station_nm")) %>%
-  na.omit()
+gage_locations_join <-  merge(x = gage_locations_sf,
+                           y = site_flow, 
+                           by.x = "site_no", 
+                           by.y = "site_no")
 
 #17. Show the column names of the joined dataset
 colnames(gage_locations_join)
@@ -174,11 +176,11 @@ Now we can examine where the flooding appears most acute by visualizing gage hei
 
 ```{r}
 #Map the points, sized by gage height
-mapview(NE_counties, color="black", col.regions="white") +
-  mapview(gage_locations_join, zcol="gage_ht")
+mapview(NE_counties, color="black", alpha.regions=0, lwd=1, legend=F) +
+  mapview(gage_locations_join, zcol="gage_ht", alpha.regions=1, color=NA, cex=4, layer.name="gage height")
 
-mapview(NE_counties, color="black", col.regions="white") +
-  mapview(gage_locations_join, cex="gage_ht")
+mapview(NE_counties, color="black", alpha.regions=0, lwd=1, legend=F) +
+  mapview(gage_locations_join, cex="gage_ht", layer.name="flood gages by gage height")
 
 ```
 
@@ -200,8 +202,9 @@ NE_counties_utm <- st_transform(NE_counties, crs = 32614)
 gage_locations_join_utm <- st_transform(gage_locations_join, crs = 32614)
 
 #21 Plot the data
-mapview(NE_counties_utm, col.regions="white") +
-  mapview(gage_locations_join_utm) ##each can be seen as a different color???
+mapview(NE_counties_utm, col.regions="skyblue", lwd=1, legend=F) +
+  mapview(gage_locations_join_utm, cex=4, col.regions="orange", alpha.regions=1,
+          layer.name="flood gages") 
 
 ```
 
@@ -219,13 +222,14 @@ Now let's zoom into a particular county and examine the gages located there.
 
 ```{r}
 #22 Select the county
-
+Lancaster <- filter(NE_counties_utm, NAME=="Lancaster")
 
 #23 Select gages within the selected county
-
+Lancaster_gages <- gage_locations_join_utm[Lancaster,]
 
 #24 Plot
-
-
-
+mapview(NE_counties_utm, alpha.regions=0, lwd=1, legend=F) +
+  mapview(Lancaster, layer.name="Lancaster County") +
+  mapview(Lancaster_gages, col.regions="red", cex=3, layer.name="flood gages")
+  
 ```
