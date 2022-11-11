@@ -90,7 +90,8 @@ colnames(gage_locations)
 
 ```
 
-9. What columns in the dataset contain the x and y coordinate values, respectively?  
+9. What columns in the dataset contain the x and y coordinate values, respectively?
+
 > ANSWER:
 > The dec_long_va column contains the x values and the dec_lat_va column contains the y values. 
 
@@ -216,10 +217,10 @@ mapview(NE_counties_utm, col.regions="skyblue", lwd=1, legend=F) +
 
 ### Select the gages falling within a given county
 
-Now let's zoom into a particular county and examine the gages located there. 
-22. Select Lancaster county from your projected county sf dataframe 
-23. Select the gage sites falling `within` that county
- * Use either matrix subsetting or tidy filtering 
+Now let's zoom into a particular county and examine the gages located there.  
+22. Select Lancaster county from your projected county sf dataframe   
+23. Select the gage sites falling `within` that county  
+ * Use either matrix subsetting or tidy filtering  
 24. Create a plot showing:
  * all Nebraska counties,
  * the selected county, 
