@@ -1,11 +1,13 @@
 ---
-title: "Assignment 8: Spatial Analysis in R"
+title: 'Assignment 8: Spatial Analysis in R'
 author: "Emma Brentjens"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
 geometry: margin=2.54cm
-editor_options: 
+editor_options:
   chunk_output_type: console
-  markdown: 
+  markdown:
     wrap: 72
 ---
 
@@ -61,14 +63,14 @@ NE_counties <- st_read("./Data/Spatial/cb_2018_us_county_20m.shp") %>%
 st_crs(NE_counties)$epsg
 
 #5. Plot the data
-mapview(NE_counties)
+mapview(NE_counties, layer.name="Nebraska counties")
 
 ```
 
 6. What is the EPSG code of the Counties dataset? Is this a geographic or a projected coordinate reference system? (Or, does this CRS use angular or planar coordinate units?) To what datum is this CRS associated? (Tip: look the EPSG code on <https://spatialreference.org>) 
 
 > ANSWER: 
-> 
+> The EPSG code of the counties is 4269. It is a projected coordinate reference system and uses planar coordinate units. The code refers to NAD83 (North American Datum of 1983).
 
 
 ### Read in gage locations csv as a dataframe, then display the column names it contains
@@ -90,7 +92,7 @@ colnames(gage_locations)
 
 9. What columns in the dataset contain the x and y coordinate values, respectively?  
 > ANSWER:
-> 
+> The dec_long_va column contains the x values and the dec_lat_va column contains the y values. 
 
 
 ### Convert the dataframe to a spatial features ("sf") dataframe
@@ -114,7 +116,7 @@ colnames(gage_locations_sf)
 12. What new field(s) appear in the sf dataframe created? What field(s), if any, disappeared?
 
 >ANSWER: 
->
+>There is a new field called "geometry" with coordinates for each point. The dec_long_va and dec_lat_va columns are gone because they were combined into coordinate values in converting the dataframe to an sf object.
 
 
 ### Plot the gage locations on top of the counties
@@ -127,8 +129,10 @@ colnames(gage_locations_sf)
 ```{r Plot the spatial features}
 #13. Plot the gage locations atop the county features
 gage_county_plot <- ggplot() +
-  geom_sf(data=NE_counties) +
-  geom_sf(data=gage_locations_sf) 
+  geom_sf(data=NE_counties, fill="lavender") +
+  geom_sf(data=gage_locations_sf, color="tomato") +
+  labs(title = "NWIS Gage Locations in Nebraska",
+              subtitle = "Emma Brentjens")
 
 gage_county_plot
 
@@ -177,10 +181,11 @@ Now we can examine where the flooding appears most acute by visualizing gage hei
 ```{r}
 #Map the points, sized by gage height
 mapview(NE_counties, color="black", alpha.regions=0, lwd=1, legend=F) +
-  mapview(gage_locations_join, zcol="gage_ht", alpha.regions=1, color=NA, cex=4, layer.name="gage height")
-
-mapview(NE_counties, color="black", alpha.regions=0, lwd=1, legend=F) +
   mapview(gage_locations_join, cex="gage_ht", layer.name="flood gages by gage height")
+
+#Map of points' gage height by color
+mapview(NE_counties, color="black", alpha.regions=0, lwd=1, legend=F) +
+  mapview(gage_locations_join, zcol="gage_ht", alpha.regions=1, color=NA, cex=4, layer.name="gage height")
 
 ```
 
