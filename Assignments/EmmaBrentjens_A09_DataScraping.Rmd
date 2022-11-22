@@ -35,6 +35,8 @@ getwd()
 library(tidyverse)
 library(rvest)
 library(ggplot2)
+library(dplyr)
+library(rlang)
 
 ##setting ggplot theme  
 Emma_theme <- theme_linedraw() +
@@ -120,7 +122,7 @@ local_water_df <- data_frame(Water_System_Name=water.system.name,
 ##max daily withdrawals plot
 withdrawal_plot <- ggplot(data=local_water_df, aes(x=Month, y=Daily_Max_Withdrawals, group=1)) +
   geom_line() +
-  geom_smooth(color="tomato", se=F) ##include smoothed line???
+  ylab("Daily Maximum Withdrawals")
 
 withdrawal_plot
 
@@ -177,7 +179,7 @@ Durham_2015 <- data_scrape(PWSID="03-32-010", Year=2015)
 ##Durham 2015 plot
 withdrawal_plot_2015 <- ggplot(data=Durham_2015, aes(x=Month, y=Daily_Max_Withdrawals, group=1)) +
   geom_line() +
-  geom_smooth(color="tomato", se=F)
+  ylab("Daily Maximum Withdrawals")
 
 withdrawal_plot_2015
 
@@ -192,8 +194,10 @@ Asheville_2015 <- data_scrape(PWSID="01-11-010", Year=2015)
 
 ##Durham and Asheville plot
 Durham_Asheville_plot <- ggplot() +
-  geom_line(data=Durham_2015, aes(x=Month, y=Daily_Max_Withdrawals, group=1)) +
-  geom_line(data=Asheville_2015, color="purple", aes(x=Month, y=Daily_Max_Withdrawals, group=1)) 
+  geom_line(data=Durham_2015, aes(x=Month, y=Daily_Max_Withdrawals, group=1, color=Water_System_Name)) +
+  geom_line(data=Asheville_2015, aes(x=Month, y=Daily_Max_Withdrawals, color=Water_System_Name, group=1)) +
+  scale_color_manual(values=c("purple", "black"), name = "Water System") +
+  ylab("Daily Maximum Withdrawals")
 
 Durham_Asheville_plot
 
@@ -208,13 +212,16 @@ Durham_Asheville_plot
 #9  
 Asheville_data <- map2("01-11-010", rep(2010:2019), data_scrape)
 Asheville_data_df <- bind_rows(Asheville_data)
+Asheville_data_df$Date <- as.Date(Asheville_data_df$Date, format = "%m-%Y")
 
 Asheville_plot <- ggplot(data=Asheville_data_df, aes(x=Date, y=Daily_Max_Withdrawals, group=1)) +
   geom_line() +
-  geom_smooth(color="tomato", se=F)
+  geom_smooth(color="tomato", se=F) +
+  ylab("Daily Maximum Withdrawals") 
 
 Asheville_plot 
 
 ```
 
 >Question: Just by looking at the plot (i.e. not running statistics), does Asheville have a trend in water usage over time?
+>It looks like there may be a nonlinear trend in water usage over time, with higher water usage during 2015.
