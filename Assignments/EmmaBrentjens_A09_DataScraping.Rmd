@@ -160,9 +160,9 @@ max.withdrawals.mgd <- url %>%
                              Date=paste(Month, "-", Year), 
                              Daily_Max_Withdrawals=
                                   as.numeric(max.withdrawals.mgd)) %>%
-    mutate(Water_System_Name= !!water.system.name,
-                             PSWID= !!pswid,
-                             Ownership= !!ownership)
+    mutate(PSWID= !!pswid,
+            Ownership= !!ownership,
+            Water_System_Name= !!water.system.name)
 
   return(local_water_df2)
 }
